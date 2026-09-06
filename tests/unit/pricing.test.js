@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { applyDiscount, cartTotal, lineTotal, withVat } from '../../src/pricing.js';
+import {
+  applyDiscount,
+  bulkDiscountPercent,
+  cartTotal,
+  lineTotal,
+  withVat,
+} from '../../src/pricing.js';
 
 describe('lineTotal', () => {
   it('multiplies unit price by quantity', () => {
@@ -51,5 +57,24 @@ describe('cartTotal', () => {
 
   it('handles a single line with no discount', () => {
     expect(cartTotal([{ unitPrice: 50, quantity: 1 }])).toBe(60);
+  });
+});
+
+describe('bulkDiscountPercent', () => {
+  it.each([
+    [0, 0],
+    [9, 0],
+    [10, 5],
+    [19, 5],
+    [20, 10],
+    [99, 10],
+    [100, 15],
+    [500, 15],
+  ])('gives %i units a %i percent discount', (units, expected) => {
+    expect(bulkDiscountPercent(units)).toBe(expected);
+  });
+
+  it('rejects a negative unit count', () => {
+    expect(() => bulkDiscountPercent(-1)).toThrow(TypeError);
   });
 });

@@ -24,6 +24,26 @@ export function withVat(total) {
   return round(total * (1 + VAT_RATE));
 }
 
+export function bulkDiscountPercent(totalUnits) {
+  if (!Number.isInteger(totalUnits) || totalUnits < 0) {
+    throw new TypeError('totalUnits must be a non-negative integer');
+  }
+
+  if (totalUnits >= 100) {
+    return 15;
+  }
+
+  if (totalUnits >= 20) {
+    return 10;
+  }
+
+  if (totalUnits >= 10) {
+    return 5;
+  }
+
+  return 0;
+}
+
 export function cartTotal(items, discountPercent = 0) {
   const subtotal = items.reduce(
     (sum, item) => sum + lineTotal(item.unitPrice, item.quantity),
